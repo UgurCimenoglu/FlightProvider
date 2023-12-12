@@ -2,9 +2,12 @@ using System.Security.Claims;
 using System.Text;
 using FlightProject.Business.Extensions;
 using FlightProject.Business.MappingProfiles;
+using FlightProject.Business.ValidationRules.FluentValidation;
 using FlightProject.Core.Extensions;
 using FlightProject.DataAccess.Context;
 using FlightProject.DataAccess.Extensions;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -27,6 +30,10 @@ namespace FlightProject.WebAPI
             builder.Services.AddDbContext<FlightDbContext>();
 
             // Add services to the container.
+            //builder.Services.AddControllers(opt =>
+            //{
+            //    opt.Filters.Add<ValidationFilter>();
+            //});
             builder.Services.AddControllers();
 
             //Veritabanýndan çekilen verilerde include edilen veriler sonsuz döngü hatasýna giriyor, bu kod parçasý sonsuz döngüyü engelliyor.
@@ -37,6 +44,11 @@ namespace FlightProject.WebAPI
 
             //Add AutoMapper
             builder.Services.AddAutoMapper(typeof(MappingProfiles));
+
+            //FluentValidation
+            builder.Services.AddFluentValidationAutoValidation()
+                .AddFluentValidationClientsideAdapters()
+                .AddValidatorsFromAssemblyContaining<UserRegisterValidation>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
