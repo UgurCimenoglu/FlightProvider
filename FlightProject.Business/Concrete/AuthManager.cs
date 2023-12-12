@@ -26,6 +26,9 @@ namespace FlightProject.Business.Concrete
 
         public async Task<IResult> RegisterAsync(UserForRegisterDto userForRegisterDto, string password)
         {
+            var userExist = await UserExists(userForRegisterDto.Email);
+            if (!userExist.Success) return userExist; //Email daha önce kullanışmış ise hata dönuyorum!.
+
             byte[] passwordHash, passwordSalt;
             HashingHelper.CreatePasswordHash(password, out passwordHash, out passwordSalt);
 
@@ -64,9 +67,9 @@ namespace FlightProject.Business.Concrete
         public async Task<IResult> UserExists(string email)
         {
             var user = await _userService.FindByEmailAsync(email);
-            if (user.Data == null)
+            if (user.Data is not null)
             {
-                return new ErrorResult("Kullanici sistemde kayıtlı!");
+                return new ErrorResult("Kullanici by email ile sistemde kayıtlı!");
             }
             return new SuccessResult();
         }
