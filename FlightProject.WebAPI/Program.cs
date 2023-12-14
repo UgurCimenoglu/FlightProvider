@@ -29,11 +29,8 @@ namespace FlightProject.WebAPI
             //    opt.UseSqlServer(builder.Configuration.GetConnectionString("FlightDb")));
             builder.Services.AddDbContext<FlightDbContext>();
 
-            // Add services to the container.
-            //builder.Services.AddControllers(opt =>
-            //{
-            //    opt.Filters.Add<ValidationFilter>();
-            //});
+            builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
+                policy.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
             builder.Services.AddControllers();
 
             //Veritabanýndan çekilen verilerde include edilen veriler sonsuz döngü hatasýna giriyor, bu kod parçasý sonsuz döngüyü engelliyor.
@@ -105,6 +102,8 @@ namespace FlightProject.WebAPI
             }
 
             app.UseMiddleware<ExceptionMiddleware>();
+
+            app.UseCors();
 
             app.UseHttpsRedirection();
 

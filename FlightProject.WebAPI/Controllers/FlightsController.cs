@@ -49,5 +49,16 @@ namespace FlightProject.WebAPI.Controllers
             var res = await _flightService.DeleteById(id);
             return Ok(res);
         }
+
+        [HttpGet("[action]")]
+        public IActionResult GetAllCurrentUserFlight()
+        {
+            var result = _flightService.GetAllCurrentUserFlight();
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
     }
 }

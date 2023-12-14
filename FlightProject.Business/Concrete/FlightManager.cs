@@ -38,6 +38,7 @@ namespace FlightProject.Business.Concrete
 
             var flight = _mapper.Map<Flight>(flightAddDto);
             flight.UserId = Guid.Parse(userId);
+            flight.IsActive = true;
 
             var res = await _flightDal.AddAsync(flight);
             if (res)
@@ -61,14 +62,15 @@ namespace FlightProject.Business.Concrete
 
         public async Task<IResult> DeleteById(string id)
         {
-            var result = await _flightDal.RemoveByIdAsync(id);
-            await _flightDal.SaveAsync();
-            if (result)
+            var currentFlight = await _flightDal.GetByIdAsync(id);
+            if (currentFlight is null)
             {
-                return new SuccessResult("Rezervasyon İptal Edildi.");
+                return new ErrorResult("Rezervasyon Bulunamadı!");
             }
-            return new ErrorResult("Rezervasyon İptal Edildilirken Bir Hata Meydana Geldi");
+            currentFlight.IsActive = false;
+            await _flightDal.SaveAsync();
 
+            return new SuccessResult("Rezervasyon İptal Edildi.");
 
         }
 
@@ -81,6 +83,27 @@ namespace FlightProject.Business.Concrete
                 throw new Exception("Uçuşları Listelerken Hata Meydana Geldi!");
             }
             return new SuccessDataResult<SearchResult>(result);
+        }
+
+        public IDataResult<List<FlightResponseDto>> GetAllCurrentUserFlight()
+        {
+            var userId = _contextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new AuthenticationException("Kullanıcı Bulunamadı!");
+            }
+
+            var flights = _flightDal.GetAll()
+                .Include(f => f.User)
+                .Include(f => f.PassengerInformation)
+                .Where(f => f.UserId == Guid.Parse(userId))
+                .ToList();
+            if (flights.Count > 0)
+            {
+                var flightsDto = _mapper.Map<List<FlightResponseDto>>(flights);
+                return new SuccessDataResult<List<FlightResponseDto>>(flightsDto);
+            }
+            return new ErrorDataResult<List<FlightResponseDto>>("Veri Bulunamadı!");
         }
     }
 }

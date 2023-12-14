@@ -14,6 +14,8 @@ namespace FlightProject.Entities.Dtos
         public DateTime DepartureDateTime { get; set; }
         public string FlightNumber { get; set; }
         public decimal Price { get; set; }
+        public string From { get; set; }
+        public string To { get; set; }
         public FlightPassengerAddDto PassengerInformation { get; set; }
     }
 }

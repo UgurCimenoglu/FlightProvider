@@ -15,6 +15,7 @@ namespace FlightProject.Business.Abstract
         Task<IDataResult<SearchResult>> Search(SearchRequest search);
         Task<IResult> AddAsync(FlightAddDto flightAddDto);
         IDataResult<List<FlightResponseDto>> GetAllFlights();
+        IDataResult<List<FlightResponseDto>> GetAllCurrentUserFlight();
         Task<IResult> DeleteById(string id);
     }
 }
