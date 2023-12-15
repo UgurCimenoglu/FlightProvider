@@ -97,6 +97,7 @@ namespace FlightProject.Business.Concrete
                 .Include(f => f.User)
                 .Include(f => f.PassengerInformation)
                 .Where(f => f.UserId == Guid.Parse(userId))
+                .OrderByDescending(f => f.CreatedDate)
                 .ToList();
             if (flights.Count > 0)
             {

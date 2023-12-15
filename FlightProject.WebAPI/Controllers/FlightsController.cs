@@ -17,7 +17,7 @@ namespace FlightProject.WebAPI.Controllers
         {
             _flightService = flightService;
         }
-
+        
         [HttpPost("[action]")]
         public async Task<IActionResult> GetFlights(SearchRequest searchRequest)
         {
