@@ -1,15 +1,17 @@
 ﻿using FlightProject.Core.Entities;
+using FlightProject.DataAccess.Extensions;
 using FlightProject.Entities.Concrete;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace FlightProject.DataAccess.Context
 {
     public class FlightDbContext : DbContext
     {
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(
-                "Server=(localdb)\\mssqllocaldb;Database=FlightDb;Trusted_Connection=True;MultipleActiveResultSets=True;Encrypt=False;");
+            optionsBuilder.UseSqlServer(Configuration.ConnectionString);
             base.OnConfiguring(optionsBuilder);
         }
 
